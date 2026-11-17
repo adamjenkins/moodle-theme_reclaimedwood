@@ -1,0 +1,554 @@
+// Reclaimed Wood: rules added after Boost's preset.
+//
+// Adapted from the Moodle 1.9 Wood theme's styles_color.css (Eloy Lafuente, 2005): the five wood textures, the
+// two-tone bevel (#FFCC99 top and left, #330000 bottom and right) on every panel, and the sliding-door tab images.
+// The idea of laying Bootstrap's regions as panels over a full-page wood background, with an inset shadow, is
+// Julian Ridden's moodle-theme_wood for Bootstrap 2 (2013, copyright line "2013 Moodle, moodle.org").
+//
+// Texture map (as in 1.9):
+// - background.jpg  dark plywood, the page.
+// - gradient1.jpg   horizontal medium plank: navbar, page header, block headers, table headers, legends.
+// - gradient2.jpg   pale "ultra-white" panel: the main content region, login form, general boxes.
+// - gradient3.jpg   vertical medium plank: the blocks drawer.
+// - gradient4.jpg   white wood: the blocks themselves and the course index.
+
+// Mixins.
+
+// A bevelled wood panel, as the 1.9 theme drew every box.
+@mixin rw-bevel() {
+    border-style: solid;
+    border-width: 1px;
+    border-color: $rw-bevel-light $rw-bevel-dark $rw-bevel-dark $rw-bevel-light;
+
+    [data-bs-theme="dark"] & {
+        border-color: $rw-dark-bevel-light $rw-dark-bevel-dark $rw-dark-bevel-dark $rw-dark-bevel-light;
+    }
+}
+
+// A textured surface. $veil is the dark varnish laid on top in the dark colour mode. The flat colour behind the
+// image is the texture's own average, shown while the image loads.
+@mixin rw-wood($image, $fallback, $veil) {
+    background-color: $fallback;
+    background-image: url("[[pix:theme|wood/#{$image}]]");
+    background-repeat: repeat;
+    background-position: left bottom;
+    color: $rw-ink;
+
+    [data-bs-theme="dark"] & {
+        background-color: #1e1006;
+        background-image: linear-gradient($veil, $veil), url("[[pix:theme|wood/#{$image}]]");
+        color: $rw-dark-ink;
+    }
+}
+
+@mixin rw-panel($image, $fallback, $veil: $rw-dark-veil-panel) {
+    @include rw-wood($image, $fallback, $veil);
+    @include rw-bevel();
+}
+
+// Carved lettering: a highlight below the stroke and a shadow above it, as if cut into the plank.
+@mixin rw-carved() {
+    color: $rw-ink;
+    text-shadow: 0 1px 0 rgba(255, 236, 200, 0.8), 0 -1px 0 rgba(51, 0, 0, 0.3);
+
+    [data-bs-theme="dark"] & {
+        color: $rw-dark-ink;
+        text-shadow: 0 -1px 0 #000, 0 1px 0 rgba(255, 204, 153, 0.2);
+    }
+}
+
+// The page.
+
+body {
+    @include rw-wood("background", #dba662, $rw-dark-veil-page);
+    background-attachment: fixed;
+}
+
+#page-wrapper,
+#page,
+#page.drawers .main-inner,
+#topofscroll {
+    background-color: transparent;
+}
+
+// Colour mode: Bootstrap's dark variables are not set by the light palette above, so headings and the body text
+// are pointed at the varnished palette explicitly.
+[data-bs-theme="dark"] {
+    --#{$prefix}body-color: #{$rw-dark-ink};
+    --#{$prefix}heading-color: #{$rw-dark-ink};
+    --#{$prefix}link-color: #{$rw-dark-link};
+    --#{$prefix}link-color-rgb: #{to-rgb($rw-dark-link)};
+    --#{$prefix}link-hover-color: #{lighten($rw-dark-link, 8%)};
+    --#{$prefix}link-hover-color-rgb: #{to-rgb(lighten($rw-dark-link, 8%))};
+}
+
+// The navbar: a medium plank.
+.navbar.fixed-top {
+    @include rw-wood("gradient1", #f7bf64, $rw-dark-veil-plank);
+    border-bottom: 1px solid $rw-bevel-dark;
+    box-shadow: inset 0 1px 0 $rw-bevel-light, 0 2px 4px rgba(51, 0, 0, 0.35);
+
+    --#{$prefix}navbar-color: #{$rw-ink};
+    --#{$prefix}navbar-hover-color: #{$rw-link};
+    --#{$prefix}navbar-active-color: #{$rw-ink};
+    --#{$prefix}navbar-brand-color: #{$rw-ink};
+    --#{$prefix}navbar-brand-hover-color: #{$rw-link};
+    --mds-text-default: #{$rw-ink};
+    --mds-bg-nav-pill-selected: rgba(255, 244, 214, 0.75);
+    --mds-bg-nav-pill-hover: rgba(255, 244, 214, 0.5);
+
+    .navbar-brand,
+    .nav-link,
+    .mds-nav-pill,
+    .btn-icon,
+    .icon {
+        color: $rw-ink;
+    }
+
+    [data-bs-theme="dark"] & {
+        border-bottom-color: #000;
+        box-shadow: inset 0 1px 0 $rw-dark-bevel-light, 0 2px 4px #000;
+
+        --#{$prefix}navbar-color: #{$rw-dark-ink};
+        --#{$prefix}navbar-hover-color: #{$rw-dark-link};
+        --#{$prefix}navbar-active-color: #{$rw-dark-ink};
+        --#{$prefix}navbar-brand-color: #{$rw-dark-ink};
+        --#{$prefix}navbar-brand-hover-color: #{$rw-dark-link};
+        --mds-text-default: #{$rw-dark-ink};
+        --mds-bg-nav-pill-selected: rgba(255, 204, 153, 0.2);
+        --mds-bg-nav-pill-hover: rgba(255, 204, 153, 0.12);
+
+        .navbar-brand,
+        .nav-link,
+        .mds-nav-pill,
+        .btn-icon,
+        .icon {
+            color: $rw-dark-ink;
+        }
+    }
+}
+
+// The page header: a plank with a carved title.
+#page-header {
+    @include rw-panel("gradient1", #f7bf64, $rw-dark-veil-plank);
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-radius: $border-radius;
+    box-shadow: 0 2px 4px rgba(51, 0, 0, 0.35);
+
+    .breadcrumb {
+        background: transparent;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: $rw-ink;
+
+        [data-bs-theme="dark"] & {
+            color: $rw-dark-ink;
+        }
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    @include rw-carved();
+}
+
+hr {
+    opacity: 1;
+    border: 0;
+    border-top: 1px solid $rw-bevel-dark;
+    border-bottom: 1px solid $rw-bevel-light;
+
+    [data-bs-theme="dark"] & {
+        border-top-color: #000;
+        border-bottom-color: $rw-dark-bevel-light;
+    }
+}
+
+// The main content: a pale panel with Julian Ridden's inset shadow.
+#region-main {
+    @include rw-panel("gradient2", #f7f1ca);
+    padding: 1rem 1.25rem;
+    border-radius: $border-radius;
+    box-shadow: inset 0 3px 8px rgba(51, 0, 0, 0.25), 0 2px 4px rgba(51, 0, 0, 0.35);
+
+    [data-bs-theme="dark"] & {
+        box-shadow: inset 0 3px 8px #000, 0 2px 4px #000;
+    }
+}
+
+// The dashboard puts its blocks straight into the main region (core.scss makes it transparent): keep a panel.
+.pagelayout-mydashboard #region-main {
+    padding: 1rem 1.25rem;
+    border-width: 1px;
+}
+
+// Blocks: panelled boards with a plank header.
+.block.card {
+    @include rw-panel("gradient4", #f3e9a7);
+    border-radius: $border-radius;
+    box-shadow: 0 2px 3px rgba(51, 0, 0, 0.3);
+
+    --#{$prefix}card-bg: transparent;
+    --#{$prefix}card-color: #{$rw-ink};
+
+    [data-bs-theme="dark"] & {
+        --#{$prefix}card-color: #{$rw-dark-ink};
+        box-shadow: 0 2px 3px #000;
+    }
+
+    .card-title {
+        @include rw-carved();
+    }
+
+    .block-header:has(> h3),
+    .block-header:has(> .card-title) {
+        @include rw-wood("gradient1", #f7bf64, $rw-dark-veil-plank);
+        margin: -1rem -1rem 0.75rem;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid $rw-bevel-dark;
+        border-radius: $border-radius $border-radius 0 0;
+
+        [data-bs-theme="dark"] & {
+            border-bottom-color: #000;
+        }
+    }
+}
+
+// Drawers.
+.drawer.drawer-left,
+.drawer.drawer-primary {
+    @include rw-wood("gradient4", #f3e9a7, $rw-dark-veil-panel);
+    border-right: 1px solid $rw-bevel-dark;
+}
+
+.drawer.drawer-right {
+    @include rw-wood("gradient3", #f7bf64, $rw-dark-veil-plank);
+    border-left: 1px solid $rw-bevel-light;
+}
+
+// The course index: links on the white wood, the current page marked with a medium plank.
+.courseindex {
+    .courseindex-item.pageitem {
+        @include rw-wood("gradient1", #f7bf64, $rw-dark-veil-plank);
+
+        a,
+        a:hover {
+            color: $rw-ink;
+
+            [data-bs-theme="dark"] & {
+                color: $rw-dark-ink;
+            }
+        }
+    }
+}
+
+// Secondary navigation and Bootstrap tabs: the 1.9 sliding-door tabs. Each tab is two images on one element,
+// the narrow left edge on top of the long right part, stretched to the tab's height.
+.secondary-navigation .navigation {
+    background-color: transparent;
+    border-bottom: 0;
+}
+
+@mixin rw-tab($state: "") {
+    background-color: transparent;
+    background-image: url("[[pix:theme|wood/tab/left#{$state}]]"), url("[[pix:theme|wood/tab/right#{$state}]]");
+    background-repeat: no-repeat, no-repeat;
+    background-position: left top, right top;
+    background-size: 14px 100%, auto 100%;
+}
+
+.secondary-navigation .mds-nav-pill,
+.nav-tabs .nav-link {
+    @include rw-tab();
+    color: $rw-link;
+    border: 0;
+    border-radius: 0;
+    margin-right: 2px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    &:hover,
+    &:focus-visible {
+        @include rw-tab("_hover");
+        color: $rw-link;
+    }
+
+    &.mds-nav-pill--selected,
+    &.active {
+        @include rw-tab("_active");
+        color: $rw-ink;
+    }
+
+    // In the dark mode the tabs keep their wood: a varnished tab would lose the shape the images give it.
+    [data-bs-theme="dark"] & {
+        color: $rw-link;
+
+        &.mds-nav-pill--selected,
+        &.active {
+            color: $rw-ink;
+        }
+    }
+}
+
+// The selected-pill indicator dot belongs to the flat pill design; the active tab image marks the state.
+.secondary-navigation .mds-nav-pill--selected::after,
+.secondary-navigation .mds-nav-pill.active::after {
+    display: none;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid $rw-bevel-dark;
+}
+
+// Activity descriptions: 1.9 put them in a general box on the pale wood. Boost's grey .activity-details box becomes
+// that panel, and a .generalbox inside it (the assignment's description) is drawn plain, so there is one panel.
+.activity-header .activity-details:not(:empty) {
+    @include rw-panel("gradient2", #f7f1ca);
+    border-radius: $border-radius;
+}
+
+.activity-header .activity-description .generalbox {
+    border: 0;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+// Boost's white cards in the content: profile sections, course cards, timeline events and others are panelled like
+// the blocks. A card inside a block gets the pale wood, so it stands out from the block's white wood. File manager
+// cards are form widgets and keep Boost's look.
+#region-main .card:not(.block):not(.filemanager-container):not(.fp-navbar) {
+    @include rw-panel("gradient4", #f3e9a7);
+
+    --#{$prefix}card-bg: transparent;
+}
+
+#region-main .block .card:not(.filemanager-container):not(.fp-navbar),
+.drawer .block .card {
+    @include rw-panel("gradient2", #f7f1ca);
+
+    --#{$prefix}card-bg: transparent;
+}
+
+// .bg-white and .bg-light are !important colours; inside a panelled card or box they would draw a white band.
+#region-main .card .bg-white,
+#region-main .card .bg-light {
+    background-color: transparent !important; // stylelint-disable-line declaration-no-important
+}
+
+// Participants and other report filters: the grey filter box and its white rows on the wood.
+#region-main .filter-group.bg-light {
+    @include rw-bevel();
+    background-image: url("[[pix:theme|wood/gradient4]]");
+
+    [data-bs-theme="dark"] & {
+        background-image: linear-gradient($rw-dark-veil-panel, $rw-dark-veil-panel), url("[[pix:theme|wood/gradient4]]");
+    }
+
+    .bg-white {
+        background-image: url("[[pix:theme|wood/gradient2]]");
+
+        [data-bs-theme="dark"] & {
+            background-image: linear-gradient($rw-dark-veil-panel, $rw-dark-veil-panel), url("[[pix:theme|wood/gradient2]]");
+        }
+    }
+}
+
+// Grade and submission tables: white and grey cells on wood. The user report's container is the panel and its
+// cells are clear; the grader report and the assignment grading table keep opaque cells (their first columns are
+// sticky and scroll over the others), so each cell gets the texture.
+#region-main .user-report-container {
+    @include rw-panel("gradient4", #f3e9a7);
+}
+
+#region-main .user-report-container .user-grade :is(tr, th, td) {
+    background-color: transparent;
+}
+
+#region-main .gradeparent :is(th, td):not(.overridden):not(.ajaxoverridden),
+#region-main .gradingtable tr.unselectedrow td {
+    @include rw-wood("gradient4", #f3e9a7, $rw-dark-veil-panel);
+}
+
+// Course sections, panelled as 1.9 drew them (#course-view .section td.side / td.content): a bevelled pale panel
+// (gradient2.jpg) with the vertical medium plank (gradient3.jpg, 28px wide) down its start edge. Activities sit
+// straight on the panel, as in 1.9, with a bevel line rather than a card.
+.course-section .section-item {
+    @include rw-bevel();
+    border-radius: $border-radius;
+    background-color: #f7f1ca;
+    background-image: url("[[pix:theme|wood/gradient3]]"), url("[[pix:theme|wood/gradient2]]");
+    background-repeat: repeat-y, repeat;
+    background-position: left top, left bottom;
+    padding-left: 28px;
+    box-shadow: 0 2px 3px rgba(51, 0, 0, 0.3);
+
+    [data-bs-theme="dark"] & {
+        background-color: #1e1006;
+        background-image:
+            linear-gradient($rw-dark-veil-panel, $rw-dark-veil-panel),
+            url("[[pix:theme|wood/gradient3]]"),
+            url("[[pix:theme|wood/gradient2]]");
+        background-repeat: repeat, repeat-y, repeat;
+        background-position: left top, left top, left bottom;
+        box-shadow: 0 2px 3px #000;
+    }
+
+    .course-section-header {
+        border-bottom: 1px solid $rw-bevel-dark;
+        box-shadow: 0 1px 0 $rw-bevel-light;
+        border-radius: 0;
+
+        [data-bs-theme="dark"] & {
+            border-bottom-color: #000;
+            box-shadow: 0 1px 0 $rw-dark-bevel-light;
+        }
+    }
+
+    .course-content-item-content .section-content-inner {
+        background-color: transparent;
+        border-top: 0;
+    }
+}
+
+.course-section .activity-item {
+    background-color: transparent;
+    border-radius: 0;
+    border-style: solid;
+    border-width: 0 0 1px;
+    border-color: $rw-bevel-dark;
+    box-shadow: 0 1px 0 $rw-bevel-light;
+
+    &:hover:not(:has(.delegated-section)) {
+        background-color: rgba(255, 255, 255, 0.35);
+    }
+
+    [data-bs-theme="dark"] & {
+        border-color: #000;
+        box-shadow: 0 1px 0 $rw-dark-bevel-light;
+
+        &:hover:not(:has(.delegated-section)) {
+            background-color: rgba(255, 204, 153, 0.08);
+        }
+    }
+}
+
+// Course sections: the 1.9 switch icons on the collapse toggle, drawn at twice their size, pixel for pixel.
+.course-section-header .icons-collapse-expand {
+    .expanded-icon,
+    .collapsed-icon {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 22px 22px;
+        image-rendering: pixelated;
+
+        .icon {
+            visibility: hidden;
+        }
+    }
+
+    .expanded-icon {
+        background-image: url("[[pix:theme|wood/switch_minus]]");
+    }
+
+    .collapsed-icon {
+        background-image: url("[[pix:theme|wood/switch_plus]]");
+    }
+}
+
+// Boxes the 1.9 theme panelled: legends and table headers on a plank, general boxes on the pale panel.
+legend,
+.generaltable thead th,
+.generaltable > thead > tr > th {
+    @include rw-wood("gradient1", #f7bf64, $rw-dark-veil-plank);
+}
+
+legend {
+    @include rw-bevel();
+    padding: 0.25rem 0.75rem;
+    width: auto;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.generaltable {
+    --#{$prefix}table-bg: transparent;
+}
+
+.generalbox,
+.box.generalbox {
+    @include rw-panel("gradient2", #f7f1ca);
+    padding: 0.75rem;
+}
+
+// Buttons: stained wood with a bevel.
+.btn-primary {
+    --#{$prefix}btn-bg: #{$rw-stain};
+    --#{$prefix}btn-border-color: #{$rw-stain-dark};
+    --#{$prefix}btn-hover-bg: #{$rw-stain-dark};
+    --#{$prefix}btn-hover-border-color: #{$rw-ink};
+    --#{$prefix}btn-active-bg: #{$rw-stain-dark};
+    box-shadow: inset 0 1px 0 rgba(255, 204, 153, 0.45);
+}
+
+// Footer and sticky footer: a plank.
+#page-footer .footer-content-popover,
+.stickyfooter {
+    @include rw-wood("gradient1", #f7bf64, $rw-dark-veil-plank);
+}
+
+// Login page: the wood on the left, the form on a pale panel.
+body.pagelayout-login #page {
+    @include rw-wood("gradient2", #f7f1ca, $rw-dark-veil-panel);
+}
+
+// Boost's extra SCSS (theme_boost_get_extra_scss()) sets the default login photo and its "AI generated image" label
+// on this selector after this file; the html element in the selector outranks it.
+html body.pagelayout-login #page .login-layout-left {
+    background-color: #dba662;
+    background-image: url("[[pix:theme|wood/background]]");
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: left top;
+
+    &::after {
+        content: none;
+    }
+}
+
+.login-layout-left-content {
+    @include rw-panel("gradient2", #f7f1ca);
+    color: $rw-ink;
+
+    blockquote {
+        border-left-color: $rw-ink;
+    }
+}
+
+// The 1.9 default user picture: the yellow smiley with sunglasses (Moodle 1.9 pix/u/f1.png and f2.png, Martin
+// Dougiamas 2003, outline removed by "bawjaws" 2005). pix_core/u/f1-f3.png replace core's default pictures wherever
+// an image URL is used; Boost shows initials instead for a user with no picture, so the smiley is drawn on the
+// initials badge and the letters are hidden. The badge keeps its aria-label (the user's full name).
+.userinitials {
+    background-color: transparent;
+    background-image: url("[[pix:core|u/f1]]");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    color: transparent;
+    overflow: hidden;
+    user-select: none;
+}
