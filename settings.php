@@ -57,6 +57,8 @@ if ($ADMIN->fulltree) {
         get_string('rawscsspre', 'theme_boost'),
         get_string('rawscsspre_desc', 'theme_boost'),
         '',
+        // SCSS needs raw input: every narrower type strips characters SCSS uses. Only admins can set it
+        // (site:config), and admin_setting_scsscode compiles it before saving; Boost uses the same type.
         PARAM_RAW
     );
     $setting->set_updatedcallback('theme_reset_all_caches');
@@ -67,6 +69,8 @@ if ($ADMIN->fulltree) {
         get_string('rawscss', 'theme_boost'),
         get_string('rawscss_desc', 'theme_boost'),
         '',
+        // SCSS needs raw input: every narrower type strips characters SCSS uses. Only admins can set it
+        // (site:config), and admin_setting_scsscode compiles it before saving; Boost uses the same type.
         PARAM_RAW
     );
     $setting->set_updatedcallback('theme_reset_all_caches');
