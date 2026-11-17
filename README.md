@@ -23,11 +23,11 @@ It stays faithful to the original:
 ## Installation
 
 Copy the theme to `theme/reclaimedwood` (inside `public/` in a 5.3 code tree), visit Site administration >
-Notifications, then choose **Reclaimed Wood** under Site administration > Appearance > Themes.
+Notifications, then choose **Reclaimed Wood** under Site administration > Appearance > Themes (Select theme).
 
 ## Settings
 
-Site administration > Appearance > Themes > Reclaimed Wood:
+Site administration > Appearance > Custom theme settings > Reclaimed Wood:
 
 - **General:** unaddable blocks (as in Boost).
 - **Advanced:** raw initial SCSS and raw SCSS (as in Boost).
